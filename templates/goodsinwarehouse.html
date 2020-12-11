@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Список товаров на складе</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+    <script src="https://unpkg.com/vuex@3.6.0/dist/vuex.js"></script>
+    <script src="js/script.js"></script>
+</head>
+
+<body>
+<div id="app">
+<table id="main_table"><tbody>
+    <tr>
+        <th>Наименование</th>
+    </tr>
+    <tr v-for="curgood in curgdarray">
+        <td>{{curgood.name}}</td>
+    </tr>
+</tbody></table>
+
+<div class="container2">
+    <div id="div_add">
+        <button id="add"  onclick="changeVisibility('add', 'add_form')">Добавить</button>
+        <span id="add_form">
+            <select id="select_a">
+                <option v-for="good in gdarray">{{good.name}}</option>
+            </select>
+            <input id="sub_i" type="submit" @click="add" value="Подтвердить"/>
+            <button id="cancel" onclick="changeVisibility('add_form', 'add')">Отмена</button>
+        </span></br>
+    </div>
+    <div id="div_upd">
+        <button id="update" onclick="changeVisibility('update', 'update_form')">Редактировать</button>
+        <span id="update_form">
+            <select id="select_uold">
+                <option v-for="curgood in curgdarray">{{curgood.name}}</option>
+            </select>
+            <label for="select_unew"> Заменить на: </label>
+            <select id="select_unew">
+                <option v-for="good in gdarray">{{good.name}}</option>
+            </select>
+            <input id="sub_u" type="submit" @click="upd" value="Подтвердить"/>
+            <button id="cancel2" onclick="changeVisibility('update_form', 'update')">Отмена</button>
+        </span></br>
+    </div>
+    <div id="div_del">
+        <button id="delete" onclick="changeVisibility('delete', 'delete_form')">Удалить</button>
+        <span id="delete_form">
+            <select id="select_d">
+                <option v-for="curgood in curgdarray">{{curgood.name}}</option>
+            </select>
+            <input id="sub_d" type="submit" @click="del" value="Подтвердить"/>
+            <button id="cancel3" onclick="changeVisibility('delete_form', 'delete')">Отмена</button>
+        </span></br>
+    </div>
+</div>
+</div>
+<script>
+    Vue.use(Vuex);
+    let store = new Vuex.Store({
+        state: {
+            name1: "",
+            name2: "",
+            curgoodsarray: [],
+            goodsarray: []
+        },
+        actions: {
+            add: async function(ctx){
+                let result = await Vue.resource("/addgtowh").save(ctx.state.name2);
+                ctx.dispatch("loadCurGoods");
+            },
+            upd: async function(ctx){
+                let result = await Vue.resource("/updateginwh").save(ctx.state.name1 + ";" + ctx.state.name2);
+                ctx.dispatch("loadCurGoods");
+            },
+            del: async function(ctx){
+                let result = await Vue.resource("/deletegfromwh").save(ctx.state.name1);
+                ctx.dispatch("loadCurGoods");
+            },
+            loadGoods: async function(ctx) {
+                let response = await Vue.resource("/getgoodslist").get();
+                let data = await response.json();
+                ctx.commit("fillGoodsArray", data);
+            },
+            loadCurGoods: async function(ctx) {
+                ctx.commit("clearCurGoodsArray"); 
+                let response = await Vue.resource("/getdata").get();
+                let data = await response.json();
+                ctx.commit("fillCurGoodsArray", data);
+            }
+        },
+        getters: {
+            getСurGoods: function (state){
+                return state.curgoodsarray;
+            },
+            getGoods: function (state){
+                return state.goodsarray;
+            }
+        },
+        mutations: {
+            clearCurGoodsArray: function (state){
+                state.curgoodsarray = [];
+            },
+            fillCurGoodsArray: function (state, data){
+                data.goods.forEach(element => state.curgoodsarray.push(element));
+            },
+            fillGoodsArray: function (state, data){
+                data.forEach(element => state.goodsarray.push(element));
+            },
+            addInit: function (state, name) {
+                state.name2 = name;
+            },
+            updInit: function (state, data) {
+                state.name1 = data.nameOld;
+                state.name2 = data.nameNew;
+            },
+            delInit: function(state, name) {
+                state.name1 = name;
+            }
+        }
+    });    
+    new Vue({
+        el: "#app",
+        store,
+        methods: {
+            add: function(){
+                let name = document.getElementById("select_a").value;
+                this.$store.commit("addInit", name);
+                this.$store.dispatch("add");
+            },
+            upd: function(){
+                let name1 = document.getElementById("select_uold").value;
+                let name2 = document.getElementById("select_unew").value;
+                this.$store.commit("updInit", { nameOld: name1, nameNew: name2 });
+                this.$store.dispatch("upd");
+            },
+            del: function(){
+                let name = document.getElementById("select_d").value;
+                this.$store.commit("delInit", name);
+                this.$store.dispatch("del");
+            }
+        },
+        computed: {
+            curgdarray: function(){
+                return this.$store.getters.getСurGoods;
+            },
+            gdarray: function(){
+                return this.$store.getters.getGoods;
+            }
+        },
+        created: function(){
+            this.$store.dispatch("loadCurGoods");
+            this.$store.dispatch("loadGoods");
+        }
+    });
+</script>
+</body>
+</html>
