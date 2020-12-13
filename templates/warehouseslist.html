@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Список складов</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+    <script src="https://unpkg.com/vuex@3.6.0/dist/vuex.js"></script>
+    <script src="js/script.js"></script>
+</head>
+
+<body>
+<div id="app">
+<table id="main_table"><tbody>
+    <tr>
+        <th>ИД</th>
+        <th>Наименование</th>
+    </tr>
+    <tr v-for="warehouse in wharray">
+        <td>{{warehouse.id}}</td>
+        <td>{{warehouse.name}}</td>
+    </tr>
+</tbody></table>
+
+<div class="container">
+    <div id="div_add">
+        <button id="add"  onclick="changeVisibility('add', 'add_form')">Добавить</button>
+        <span id="add_form">
+            <input id="txt" type="text" width="100px"/>
+            <input id="sub_i" type="submit" @click="add" value="Подтвердить"/>
+            <button id="cancel" onclick="changeVisibility('add_form', 'add')">Отмена</button>
+        </span></br>
+    </div>
+    <div id="div_upd">
+        <button id="update" onclick="changeVisibility('update', 'update_form')">Редактировать</button>
+        <span id="update_form">
+            <select id="select_u">
+                <option v-for="warehouse in wharray">{{warehouse.id}}</option>
+            </select>
+            <input id="txt2" type="text" width="100px"/>
+            <input id="sub_u" type="submit" @click="upd" value="Подтвердить"/>
+            <button id="cancel2" onclick="changeVisibility('update_form', 'update')">Отмена</button>
+        </span></br>
+    </div>
+    <div id="div_del">
+        <button id="delete" onclick="changeVisibility('delete', 'delete_form')">Удалить</button>
+        <span id="delete_form">
+            <select id="select_d">
+                <option v-for="warehouse in wharray">{{warehouse.id}}</option>
+            </select>
+            <input id="sub_d" type="submit" @click="del" value="Подтвердить"/>
+            <button id="cancel3" onclick="changeVisibility('delete_form', 'delete')">Отмена</button>
+        </span></br>
+    </div>
+</div>
+</div>
+<script src="js/warehouses_vuex.js"></script>
+<script src="js/warehouses_vue.js"></script>
+</body>
+</html>

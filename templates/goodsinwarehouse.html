@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Список товаров на складе</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+    <script src="https://unpkg.com/vuex@3.6.0/dist/vuex.js"></script>
+    <script src="js/script.js"></script>
+</head>
+
+<body>
+<div id="app">
+<table id="main_table"><tbody>
+    <tr>
+        <th>Наименование</th>
+    </tr>
+    <tr v-for="curgood in curgdarray">
+        <td>{{curgood.name}}</td>
+    </tr>
+</tbody></table>
+
+<div class="container2">
+    <div id="div_add">
+        <button id="add"  onclick="changeVisibility('add', 'add_form')">Добавить</button>
+        <span id="add_form">
+            <select id="select_a">
+                <option v-for="good in gdarray">{{good.name}}</option>
+            </select>
+            <input id="sub_i" type="submit" @click="add" value="Подтвердить"/>
+            <button id="cancel" onclick="changeVisibility('add_form', 'add')">Отмена</button>
+        </span></br>
+    </div>
+    <div id="div_upd">
+        <button id="update" onclick="changeVisibility('update', 'update_form')">Редактировать</button>
+        <span id="update_form">
+            <select id="select_uold">
+                <option v-for="curgood in curgdarray">{{curgood.name}}</option>
+            </select>
+            <label for="select_unew"> Заменить на: </label>
+            <select id="select_unew">
+                <option v-for="good in gdarray">{{good.name}}</option>
+            </select>
+            <input id="sub_u" type="submit" @click="upd" value="Подтвердить"/>
+            <button id="cancel2" onclick="changeVisibility('update_form', 'update')">Отмена</button>
+        </span></br>
+    </div>
+    <div id="div_del">
+        <button id="delete" onclick="changeVisibility('delete', 'delete_form')">Удалить</button>
+        <span id="delete_form">
+            <select id="select_d">
+                <option v-for="curgood in curgdarray">{{curgood.name}}</option>
+            </select>
+            <input id="sub_d" type="submit" @click="del" value="Подтвердить"/>
+            <button id="cancel3" onclick="changeVisibility('delete_form', 'delete')">Отмена</button>
+        </span></br>
+    </div>
+</div>
+</div>
+<script src="js/goodswarehouses_vuex.js"></script>
+<script src="js/goodswarehouses_vue.js"></script>
+</body>
+</html>
